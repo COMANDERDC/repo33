@@ -36,7 +36,7 @@ jobs:
 
       - name: Build Docker image
         id: build
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5 # zaktualizowane do najnowszej wersji
         with:
           context: .
           file: ./Dockerfile
@@ -49,13 +49,16 @@ jobs:
 
       - name: Scan for CVEs
         id: trivy_scan
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v0.12.0 # upewnij się, że używasz odpowiedniej wersji
         with:
           image-ref: ${{ steps.build.outputs.digest }}
           format: json
           severity: HIGH,CRITICAL
           ignore-unfixed: true
         continue-on-error: true
+
+      - name: Save scan results
+        run: cat trivy.json
 
       - name: Check CVE Scan Results
         id: check_scan
@@ -64,12 +67,10 @@ jobs:
             echo "vulnerable=true" >> $GITHUB_ENV
           else
             echo "vulnerable=false" >> $GITHUB_ENV
-        env:
-          TRIVY_JSON: trivy.json
 
       - name: Push Docker image (if no critical/high CVEs)
         if: env.vulnerable == 'false'
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5 # zaktualizowane do najnowszej wersji
         with:
           context: .
           file: ./Dockerfile
