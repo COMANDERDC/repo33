@@ -21,7 +21,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: "comanderdc/temp:sha-${{ github.sha }}"
+          images: "comanderdc/temp:latest-${{ github.run_number }}"
           flavor: latest=false
           tags: |
             type=sha,priority=100,prefix=sha-,format=short
