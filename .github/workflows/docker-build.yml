@@ -31,7 +31,7 @@ jobs:
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: comanderdc
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker image
@@ -46,8 +46,6 @@ jobs:
           cache-to: |
             type=registry,ref=comanderdc/temp
           push: false  # Na tym etapie nie puszujemy obrazu
-        outputs:
-          image_ref: ${{ steps.build.outputs.digest }}
 
       - name: Scan for CVEs
         id: trivy_scan
