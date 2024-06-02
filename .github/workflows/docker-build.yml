@@ -21,7 +21,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: comanderdc/temp:c
+          images: "comanderdc/temp:type=sha,priority=100,prefix=sha-,format=short"
           flavor: latest=false
           tags: |
             type=sha,priority=100,prefix=sha-,format=short
