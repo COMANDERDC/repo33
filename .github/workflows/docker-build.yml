@@ -46,7 +46,7 @@ jobs:
             type=registry,ref=comanderdc/temp
 
       - name: Scan for CVEs
-        uses: aquasecurity/trivy-action@v1.8.2  # Consider using a specific version for stability
+        uses: aquasecurity/trivy-action@v0.20.0  # Consider using a specific version for stability
         with:
           image: ${{ steps.build.outputs.name }}  # Use output from build step
           format: json
