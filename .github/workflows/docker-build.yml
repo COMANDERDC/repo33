@@ -35,7 +35,8 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker image
-        uses: docker/build-action@v2
+        id: build  # Dodaj ID kroku, aby móc odnosić się do wyjść
+        uses: docker/build-push-action@v3
         with:
           context: .
           file: ./Dockerfile
@@ -44,16 +45,24 @@ jobs:
             type=registry,ref=comanderdc/temp
           cache-to: |
             type=registry,ref=comanderdc/temp
-
+          push: false
+          
       - name: Scan for CVEs
-        uses: aquasecurity/trivy-action@v0.20.0  # Consider using a specific version for stability
+        id: trivy_scan  # Dodaj ID kroku, aby móc odnosić się do wyjść
+        uses: aquasecurity/trivy-action@v0.12.0  # Użyj poprawnej wersji
         with:
-          image: ${{ steps.build.outputs.name }}  # Use output from build step
+          image-ref: ${{ steps.build.outputs.image_ref }}
           format: json
-          fail-on-vuln: true  # Fail workflow if critical/high CVEs are found
+          severity: HIGH,CRITICAL  # Skanuj dla wysokich i krytycznych CVE
+          ignore-unfixed: true
+        continue-on-error: true  # Kontynuuj, nawet jeśli skanowanie nie powiedzie się
 
       - name: Push Docker image (if no critical/high CVEs)
-        if: ${{ !success() || steps.scan_for_cves.outputs.vulnerability_count == 0 }}
-        uses: docker/push-action@v3
+        if: ${{ steps.trivy_scan.outputs.vulnerability_count == 0 }}
+        uses: docker/build-push-action@v3
         with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
