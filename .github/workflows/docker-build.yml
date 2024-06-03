@@ -52,7 +52,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
 
       - name: Grype Scan
-        uses: anchore/grype-action@v1
+        uses: anchore/grype-action@0.78.0
         with:
           image: comanderdc/temp:${{ steps.meta.outputs.tags }}
           fail-build: true
