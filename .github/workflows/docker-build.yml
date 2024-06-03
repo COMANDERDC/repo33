@@ -55,7 +55,6 @@ jobs:
         uses: aquasecurity/trivy-action@0.20.0
         with:
             image-ref: comanderdc/temp:sha-5072b4c
-            format: arif
             output: trivy-results.sarif
             exit-code: 1
             ignore-unfixed: true
