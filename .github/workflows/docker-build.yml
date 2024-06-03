@@ -36,23 +36,24 @@ jobs:
 
       - name: Build Docker image
         id: build
-        uses: docker/build-push-action@v5 # zaktualizowane do najnowszej wersji
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           cache-from: |
-            type=registry,ref=comanderdc/temp:cache
+            type=registry,ref=comanderdc/temp
           cache-to: |
-            type=registry,ref=comanderdc/temp:cache
+            type=registry,ref=comanderdc/temp
           push: false
 
       - name: Scan for CVEs
         id: trivy_scan
-        uses: aquasecurity/trivy-action@0.12.0 # upewnij się, że używasz odpowiedniej wersji
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ steps.build.outputs.digest }}
           format: json
+          output: trivy.json  # Upewnij się, że wynik jest zapisywany do pliku
           severity: HIGH,CRITICAL
           ignore-unfixed: true
         continue-on-error: true
@@ -70,7 +71,7 @@ jobs:
 
       - name: Push Docker image (if no critical/high CVEs)
         if: env.vulnerable == 'false'
-        uses: docker/build-push-action@v5 # zaktualizowane do najnowszej wersji
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
