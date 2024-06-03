@@ -64,7 +64,7 @@ jobs:
 
       - 
         name: Scan Docker image for vulnerabilities
-        uses: aquasecurity/trivy-action@v2
+        uses: aquasecurity/trivy-action@0.20.0
         with:
           image: ${{ steps.meta.outputs.tags }}
           username: ${{ env.TRIVY_USERNAME }}
