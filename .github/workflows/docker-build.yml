@@ -54,12 +54,13 @@ jobs:
       - name: Trivy Scan
         uses: aquasecurity/trivy-action@0.20.0
         with:
-            image: comanderdc/temp:${{ steps.meta.outputs.tags }}
-            format: 'arif'
-            output: 'trivy-results.sarif'
-            exit-code: '1'
+            image-ref: comanderdc/temp:sha-5072b4c
+            format: arif
+            output: trivy-results.sarif
+            exit-code: 1
             ignore-unfixed: true
-            severity: 'CRITICAL,HIGH'
+            severity: CRITICAL,HIGH
+            scan-type: image
 
       - name: Login to GitHub Container Registry
         if: success()
