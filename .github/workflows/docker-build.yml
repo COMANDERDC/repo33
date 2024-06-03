@@ -41,15 +41,15 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-              context: .
-              file: ./Dockerfile
-              platforms: linux/amd64,linux/arm64
-              push: true
-              cache-from: |
-                type=registry,ref=$comanderdc/temp:cache 
-              cache-to: |
-                type=registry,ref=comanderdc/temp:cache  
-              tags: ${{ steps.meta.outputs.tags }}
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          cache-from: |
+            type=registry,ref=comanderdc/temp:cache 
+          cache-to: |
+            type=registry,ref=comanderdc/temp:cache  
+          tags: ${{ steps.meta.outputs.tags }}
 
       - name: Trivy Scan
         uses: aquasecurity/trivy-action@0.20.0
