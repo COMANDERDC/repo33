@@ -9,8 +9,8 @@ on:
 env:
   DOCKERHUB_USERNAME: comanderdc
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-  TRIVY_USERNAME: $comanderdc
-  TRIVY_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+  TRIVY_USERNAME: $COMANDERDC
+  TRIVY_PASSWORD: ${{ secrets.TOKEN_GITHUB }}
 
 jobs:
   ci_step:
@@ -66,8 +66,31 @@ jobs:
         name: Scan Docker image for vulnerabilities
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image: ${{ steps.meta.outputs.tags }}
-          username: ${{ env.TRIVY_USERNAME }}
-          password: ${{ env.TRIVY_PASSWORD }}
+          image-ref: ${{ steps.meta.outputs.tags }}
+          format: sarif
+          output: trivy-results.sarif
           exit-code: 1
-          severity: HIGH
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+
+      - 
+        name: Check if image has critical or high vulnerabilities
+        if: steps.trivy.outputs.exit-code == 1
+        run: |
+          echo "Image has critical or high vulnerabilities. Aborting deployment."
+          exit 1
+
+      - 
+        name: Push Docker image to DockerHub
+        if: steps.trivy.outputs.exit-code == 0
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          cache-from: |
+            type=registry,ref=comanderdc/temp:cache 
+          cache-to: |
+            type=registry,ref=comanderdc/temp:cache  
+          tags: ${{ steps.meta.outputs.tags }}
