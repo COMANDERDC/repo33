@@ -10,7 +10,7 @@ jobs:
   ci_step:
     name: Build, tag and push Docker image to DockerHub
     runs-on: ubuntu-latest
-      
+    
     steps:
       - name: Check out the source_repo
         uses: actions/checkout@v4
@@ -41,25 +41,25 @@ jobs:
         id: build_and_push
         uses: docker/build-push-action@v5
         with:
-          context:.
-          file:./Dockerfile
+          context: .
+          file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           cache-from: |
-            type=registry,ref=coamnderdc/temp:cache 
+            type=registry,ref=comanderdc/temp:cache 
           cache-to: |
-            type=registry,ref=comanderdc/temp:cache  
+            type=registry,ref=comanderdc/temp:cache 
           tags: ${{ steps.meta.outputs.tags }}
 
       - name: Trivy Scan
         uses: aquasecurity/trivy-action@0.20.0
         with:
-            image-ref: comanderdc/temp:sha-5072b4c
-            output: trivy-results.sarif
-            exit-code: 0
-            ignore-unfixed: true
-            severity: CRITICAL,HIGH
-            scan-type: image
+          image-ref: comanderdc/temp:${{ steps.meta.outputs.tags }}
+          output: trivy-results.sarif
+          exit-code: 0
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+          scan-type: image
         continue-on-error: true
 
       - name: Login to GitHub Container Registry
@@ -72,8 +72,8 @@ jobs:
       - name: Push Docker image to GHCR
         uses: docker/build-push-action@v5
         with:
-          context:.
-          file:./Dockerfile
+          context: .
+          file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/comanderdc/temp:${{ steps.meta.outputs.tags }}
