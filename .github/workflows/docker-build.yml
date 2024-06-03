@@ -53,9 +53,12 @@ jobs:
           wget https://github.com/aquasecurity/trivy/releases/download/v0.40.0/trivy_0.40.0_Linux-64bit.deb
           sudo dpkg -i trivy_0.40.0_Linux-64bit.deb
 
+      - name: Set image tag variable
+        run: echo "IMAGE_TAG=$(echo ${{ steps.meta.outputs.tags }} | awk -F',' '{print $1}')" >> $GITHUB_ENV
+
       - name: Scan for CVEs
         id: trivy_scan
-        run: trivy image --format json --output trivy.json --severity HIGH,CRITICAL comanderdc/temp:$(echo ${{ steps.meta.outputs.tags }} | awk -F',' '{print $1}')
+        run: trivy image --format json --output trivy.json --severity HIGH,CRITICAL ${{ env.IMAGE_TAG }}
 
       - name: Save scan results
         run: cat trivy.json
