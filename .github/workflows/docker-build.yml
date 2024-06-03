@@ -42,14 +42,14 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           cache-from: |
-            type=registry,ref=comanderdc/temp
+            type=registry,ref=comanderdc/temp:cache
           cache-to: |
-            type=registry,ref=comanderdc/temp
+            type=registry,ref=comanderdc/temp:cache
           push: false
 
       - name: Scan for CVEs
         id: trivy_scan
-        uses: aquasecurity/trivy-action@v0.12.0 # upewnij się, że używasz odpowiedniej wersji
+        uses: aquasecurity/trivy-action@0.12.0 # upewnij się, że używasz odpowiedniej wersji
         with:
           image-ref: ${{ steps.build.outputs.digest }}
           format: json
