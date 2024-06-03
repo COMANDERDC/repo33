@@ -40,7 +40,7 @@ jobs:
         run: docker build --cache-from ${{ steps.meta.outputs.cache_from }} -t ${{ steps.meta.outputs.tags }} .
 
       - name: Scan for vulnerabilities (replace with your preferred scanner)
-        uses: anchore/grype@v1.4.1  # Or other vulnerability scanner like trivy
+        uses: anchore/grype@1.4.1  # Or other vulnerability scanner like trivy
         with:
           image: ${{ steps.meta.outputs.tags }}
           fail_on: high  # Fail if high or critical vulnerabilities are found
