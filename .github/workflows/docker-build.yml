@@ -67,7 +67,7 @@ jobs:
         with:
           registry: ghcr.io
           username: comanderdc
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.TOKEN_GITHUB }}
 
       - name: Push Docker image to GHCR
         uses: docker/build-push-action@v5
@@ -76,4 +76,4 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/comanderdc/repo33
+          tags: ghcr.io/comanderdc/repo33:${{ steps.meta.outputs.tags }}
