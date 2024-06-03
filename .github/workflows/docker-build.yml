@@ -46,9 +46,9 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           cache-from: |
-            type=registry,ref=comanderdc 
+            type=registry,ref=comanderdc/temp 
           cache-to: |
-            type=registry,ref=comanderdc  
+            type=registry,ref=comanderdc/temp  
           tags: ${{ steps.meta.outputs.tags }}
 
       - name: Trivy Scan
