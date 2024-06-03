@@ -45,6 +45,7 @@ jobs:
             type=registry,ref=comanderdc/temp
           cache-to: |
             type=registry,ref=comanderdc/temp
+          tags: ${{ steps.meta.outputs.tags }}
           push: false
 
       - name: Install Trivy
@@ -54,8 +55,7 @@ jobs:
 
       - name: Scan for CVEs
         id: trivy_scan
-        run: |
-          trivy image --format json --output trivy.json --severity HIGH,CRITICAL ${{ steps.build.outputs.digest }}
+        run: trivy image --format json --output trivy.json --severity HIGH,CRITICAL comanderdc/temp:$(echo ${{ steps.meta.outputs.tags }} | awk -F',' '{print $1}')
 
       - name: Save scan results
         run: cat trivy.json
